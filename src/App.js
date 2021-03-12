@@ -16,36 +16,59 @@ class App extends React.Component {
           id: 1,
           name: "Marvin",
           email: "marvin@mail.com",
-          // url: "https://robohash.org/1?set=set4&size=80x80",
+          geo: {
+            lng: 81.1496,
+          },
         },
+          // url: "https://robohash.org/1?set=set4&size=80x80",
+        
         {
           id: 2,
           name: "Darvin",
           email: "darvin@mail.com",
-          // url: "https://robohash.org/2?set=set4&size=80x80",
+          geo: {
+            lng: 81.1496,
+          },
         },
+          // url: "https://robohash.org/2?set=set4&size=80x80",
+        
         {
           id: 3,
           name: "Harry Potter",
           email: "harry@mail.com",
-          // url: "https://robohash.org/3?set=set4&size=80x80",
+          geo: {
+            lng: 81.1496,
+          },
         },
+          // url: "https://robohash.org/3?set=set4&size=80x80",
+        
         {
           id: 4,
           name: "Kitty",
           email: "harry@mail.com",
+          address: {
+            geo: {
+              lng: 81.1496,
+            },
+          },
           // url: "https://robohash.org/3?set=set4&size=80x80",
         },
         {
           id: 5,
           name: "Petya",
           email: "harry@mail.com",
+          address: {
+            geo: {
+              lng: 81.1496,
+            },
+          },
           // url: "https://robohash.org/3?set=set4&size=80x80",
         },
       ],
       catsFromServer: [],
       arrayOfSelectedCats: [],
-      countOfSelectedCats: 0,
+      sum: 0,
+    
     };
 
     console.log("Constructor...");
@@ -74,17 +97,34 @@ class App extends React.Component {
     const selectedUserIndex = this.state.catsFromServer.findIndex((item) => {
       return item.id === id;
     });
-    console.log(selectedUserIndex);
     let selectedCat = cats.splice(selectedUserIndex, 1);
-    console.log(cats);
     this.setState({ catsFromServer: cats });
-
     let joined = this.state.arrayOfSelectedCats.concat(selectedCat);
-    console.log(joined);
     this.setState({ arrayOfSelectedCats: joined });
-    this.setState({
-      countOfSelectedCats: 1 + this.state.arrayOfSelectedCats.length,
+
+    let sum = 0;
+    this.state.arrayOfSelectedCats.map((object) => {
+      let num = Number(object.address.geo.lng);
+
+      return (sum += Math.floor(num));
     });
+    this.setState({ sum });
+ 
+  };
+
+  addToCatsFromServer = (id) => {
+    const catArr = [...this.state.arrayOfSelectedCats];
+    const cardIdx = this.state.arrayOfSelectedCats.findIndex((item) => {
+      return item.id === id;
+    });
+    let removeCat = catArr.splice(cardIdx, 1);
+
+    this.setState({ arrayOfSelectedCats: catArr });
+
+    let addToBack = this.state.catsFromServer.concat(removeCat);
+    this.setState({ catsFromServer: addToBack });
+
+
   };
 
   render() {
@@ -108,16 +148,33 @@ class App extends React.Component {
               })}
           </ul>
           <h1 className="selected-cats">
-            Selected cats ({this.state.countOfSelectedCats})
+            Selected cats ({this.state.arrayOfSelectedCats.length}) sum (
+            {this.state.sum})
           </h1>
           <ul className="app__main-list">
             {!!this.state.arrayOfSelectedCats.length &&
               this.state.arrayOfSelectedCats.map((cat) => {
                 return (
-                <CardItem 
-                key={cat.id} 
-                cat={cat} 
-                />
+                // <CardItem 
+                // key={cat.id} 
+                // cat={cat} 
+                // />
+                <li
+                    className="item"
+                    onClick={() => this.addToCatsFromServer(cat.id)}
+                    key={cat.id}
+                    cat={cat}
+                  >
+                    <img
+                      src={`https://robohash.org/${cat.id}?set=set4`}
+                      alt="cat"
+                      className="item__image"
+                    />
+                    <div className="item__header">{cat.name}</div>
+                    <div className="item__header">{cat.email}</div>
+                    <div className="item__header">{cat.address.geo.lng}</div>
+                  </li>
+             
                 
             //           <li className="item" onClick={() => this.deleteCatHandle(cat.id)} key={cat.id} 
             //     cat={cat} >
